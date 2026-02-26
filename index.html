@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WormGPT Pro - منصة الذكاء الاصطناعي المتقدمة</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-brain"></i> WormGPT Pro</h2>
+            <button class="btn-new-chat" onclick="newChat()">
+                <i class="fas fa-plus"></i> محادثة جديدة
+            </button>
+        </div>
+        
+        <div class="chat-history" id="chatHistory">
+            <!-- Chat history will be populated here -->
+        </div>
+        
+        <div class="sidebar-footer">
+            <button class="btn-settings" onclick="openSettings()">
+                <i class="fas fa-cog"></i> الإعدادات
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <button class="btn-toggle-sidebar" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="top-bar-title">
+                <h3 id="chatTitle">محادثة جديدة</h3>
+            </div>
+            <div class="top-bar-actions">
+                <button class="btn-icon" onclick="exportChat()" title="تصدير المحادثة">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="btn-icon" onclick="clearChat()" title="مسح المحادثة">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Container -->
+        <div class="chat-container" id="chatContainer">
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-content">
+                    <h1><i class="fas fa-robot"></i> مرحباً بك في WormGPT Pro</h1>
+                    <p>منصة الذكاء الاصطناعي المتقدمة مع إمكانيات لا محدودة</p>
+                    
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <i class="fas fa-code"></i>
+                            <h3>كتابة وتنفيذ الأكواد</h3>
+                            <p>دعم كامل لجميع لغات البرمجة</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-file-code"></i>
+                            <h3>إدارة الملفات</h3>
+                            <p>إنشاء وتعديل الملفات مباشرة</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-search"></i>
+                            <h3>البحث على الويب</h3>
+                            <p>الوصول للمعلومات الحديثة</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-image"></i>
+                            <h3>تحليل الصور</h3>
+                            <p>رفع وتحليل الصور والملفات</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="messages" id="messages">
+                <!-- Messages will appear here -->
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <div class="input-tools">
+                <button class="btn-tool" onclick="openFileUpload()" title="رفع ملف">
+                    <i class="fas fa-paperclip"></i>
+                </button>
+                <button class="btn-tool" onclick="openCodeEditor()" title="محرر الأكواد">
+                    <i class="fas fa-code"></i>
+                </button>
+                <button class="btn-tool" onclick="toggleVoiceInput()" title="إدخال صوتي">
+                    <i class="fas fa-microphone"></i>
+                </button>
+            </div>
+            
+            <div class="input-container">
+                <textarea 
+                    id="userInput" 
+                    placeholder="اكتب رسالتك هنا... (Shift + Enter للسطر الجديد)"
+                    rows="1"
+                    onkeydown="handleKeyPress(event)"
+                ></textarea>
+                <button class="btn-send" onclick="sendMessage()" id="sendBtn">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            
+            <div class="attached-files" id="attachedFiles"></div>
+        </div>
+    </div>
+
+    <!-- Code Editor Modal -->
+    <div class="modal" id="codeEditorModal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3><i class="fas fa-code"></i> محرر الأكواد</h3>
+                <button class="btn-close" onclick="closeCodeEditor()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="code-editor-tools">
+                    <select id="languageSelect" onchange="changeLanguage()">
+                        <option value="javascript">JavaScript</option>
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++</option>
+                        <option value="csharp">C#</option>
+                        <option value="php">PHP</option>
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="sql">SQL</option>
+                    </select>
+                    <button class="btn-primary" onclick="executeCode()">
+                        <i class="fas fa-play"></i> تنفيذ
+                    </button>
+                    <button class="btn-secondary" onclick="formatCode()">
+                        <i class="fas fa-align-left"></i> تنسيق
+                    </button>
+                </div>
+                <textarea id="codeEditor" class="code-editor" spellcheck="false"></textarea>
+                <div class="code-output" id="codeOutput">
+                    <div class="output-header">
+                        <span><i class="fas fa-terminal"></i> النتائج</span>
+                    </div>
+                    <pre id="outputContent"></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeCodeEditor()">إغلاق</button>
+                <button class="btn-primary" onclick="insertCode()">إدراج في المحادثة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-cog"></i> الإعدادات</h3>
+                <button class="btn-close" onclick="closeSettings()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-group">
+                    <label for="apiKey">مفتاح API:</label>
+                    <input type="password" id="apiKey" placeholder="أدخل مفتاح API الخاص بك">
+                    <button class="btn-secondary btn-small" onclick="testApiKey()">
+                        <i class="fas fa-check"></i> اختبار
+                    </button>
+                </div>
+                
+                <div class="settings-group">
+                    <label for="temperature">درجة الإبداع (Temperature):</label>
+                    <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7">
+                    <span id="temperatureValue">0.7</span>
+                </div>
+                
+                <div class="settings-group">
+                    <label for="maxTokens">الحد الأقصى للكلمات:</label>
+                    <input type="number" id="maxTokens" value="2000" min="100" max="8000">
+                </div>
+                
+                <div class="settings-group">
+                    <label>
+                        <input type="checkbox" id="streamResponse" checked>
+                        عرض الرد تدريجياً (Streaming)
+                    </label>
+                </div>
+                
+                <div class="settings-group">
+                    <label>
+                        <input type="checkbox" id="syntaxHighlight" checked>
+                        تلوين الأكواد تلقائياً
+                    </label>
+                </div>
+                
+                <div class="settings-group">
+                    <label for="theme">السمة:</label>
+                    <select id="theme" onchange="changeTheme()">
+                        <option value="dark">داكن</option>
+                        <option value="light">فاتح</option>
+                        <option value="blue">أزرق</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeSettings()">إلغاء</button>
+                <button class="btn-primary" onclick="saveSettings()">حفظ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Upload Input (Hidden) -->
+    <input type="file" id="fileInput" style="display: none;" multiple onchange="handleFileSelect(event)">
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>جاري المعالجة...</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-cpp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-csharp.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.0/marked.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
